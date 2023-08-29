@@ -4,6 +4,7 @@ from .pipeline_openmp_question_answering import openmp_question_answering
 from .pipeline_codebase_question_answering import codebase_question_answering
 from .pipeline_similarity_checking import similarity_checking
 
+
 def hpcpipelines(task: str, model: str, **kwargs) -> callable:
     """
     Returns a function for the specified task and model.
@@ -22,21 +23,25 @@ def hpcpipelines(task: str, model: str, **kwargs) -> callable:
     # Read the configuration file
     with open(os.path.join(os.path.dirname(__file__), 'config.json')) as f:
         config = json.load(f)
-    
+
     # Check if the task is valid
     if task not in config:
-        raise ValueError('Unknown task: {}'.format(task))
-    
+        supported_tasks = ', '.join(config.keys())
+        raise ValueError(
+            'Unknown task: {}. Supported tasks are: {}'.format(task, supported_tasks))
+
     # Check if the model is valid for the task
     if model not in config[task]['models']:
-        raise ValueError('Invalid model for {}: {}'.format(task, model))
-    
+        supported_models = ', '.join(config[task]['models'])
+        raise ValueError('Invalid model for {}: {}. Supported models for {} are: {}'.format(
+            task, model, task, supported_models))
+
     # Get the default parameters for the model
     default_parameters = config[task]['default_parameters'][model]
-    
+
     # Update the default parameters with the user-specified parameters
     parameters = {**default_parameters, **kwargs}
-    
+
     if task == 'openmp_question_answering':
         return lambda question: openmp_question_answering(model, question, **parameters)
     elif task == 'similarity_checking':
