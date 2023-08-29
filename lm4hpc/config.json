@@ -1,0 +1,23 @@
+{
+    "openmp_question_answering": {
+        "models": ["dolly", "gpt3", "starcoder"],
+        "default_parameters": {
+            "dolly": {
+                "torch_dtype": "torch.bfloat16",
+                "trust_remote_code": true,
+                "device_map": "auto",
+                "max_new_tokens": 256,
+                "temperature": 0.001,
+                "return_full_text": true
+            },
+            "gpt3": {
+            },
+            "starcoder": {
+            }
+        }
+    },
+    "similarity_checking": {
+    },
+    "codebase_question_answering": {
+    }
+}
