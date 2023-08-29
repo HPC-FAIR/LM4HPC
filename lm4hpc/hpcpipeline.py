@@ -1,4 +1,4 @@
-from .pipeline_open_question_answering import openmp_question_answering
+from .pipeline_openmp_question_answering import openmp_question_answering
 
 
 def hpcpipelines(task, model, **kwargs):
