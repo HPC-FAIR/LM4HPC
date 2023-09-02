@@ -6,7 +6,7 @@ from .pipeline_similarity_checking import similarity_checking
 
 config = {
     "openmp_question_answering": {
-        "models": ["databricks/dolly-v2-12b", "gpt", "HuggingFaceH4/starchat-alpha"],
+        "models": ["databricks/dolly-v2-12b", "gpt-3.5-turbo", "HuggingFaceH4/starchat-alpha"],
         "default_parameters": {
             "databricks/dolly-v2-12b": {
                 "torch_dtype": "torch.bfloat16",
@@ -16,7 +16,7 @@ config = {
                 "temperature": 0.001,
                 "return_full_text": True
             },
-            "gpt": {
+            "gpt-3.5-turbo": {
                 "gptmodel": "gpt-3.5-turbo",
                 "temperature": 0,
                 "max_tokens": 256
