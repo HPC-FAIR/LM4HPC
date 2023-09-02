@@ -9,5 +9,7 @@ setup(
     install_requires=[
         'torch',
         'transformers',
+        'torchvision',
+        'accelerate',
     ],
 )
