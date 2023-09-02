@@ -1,5 +1,8 @@
-import torch
+import torch, json, os
 from transformers import pipeline
+
+with open(os.path.join(os.path.dirname(__file__), 'config.json')) as f:
+        config = json.load(f)
 
 def openmp_question_answering(model: str, question: str, **parameters) -> str:
     """
@@ -17,9 +20,16 @@ def openmp_question_answering(model: str, question: str, **parameters) -> str:
         ValueError: If the model is not valid.
     """
     if model == 'databricks/dolly-v2-12b':
-        text_generator = pipeline(model=model, **parameters)
-        return text_generator(question)[0]["generated_text"].split("\n")[-1]
-    elif model == 'gpt3':
+        generate_text = pipeline(model="databricks/dolly-v2-12b",
+                         torch_dtype=torch.bfloat16,
+                         trust_remote_code=True,
+                         device_map="auto",
+                         max_new_tokens=256,
+                         temperature=0.001,
+                         return_full_text=True)
+        return generate_text(question)[0]["generated_text"].split("\n")[-1]
+    elif model == 'gpt':
+        gptmodel = config["openmp_question_answering"]["default_parameters"]["gpt"]["gptmodel"]
         # initialize gpt3 model
         pass
     elif model == 'starcoder':
