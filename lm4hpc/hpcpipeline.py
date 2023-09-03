@@ -4,32 +4,10 @@ from .pipeline_openmp_question_answering import openmp_question_answering
 from .pipeline_codebase_question_answering import codebase_question_answering
 from .pipeline_similarity_checking import similarity_checking
 
-config = {
-    "openmp_question_answering": {
-        "models": ["databricks/dolly-v2-12b", "gpt-3.5-turbo", "HuggingFaceH4/starchat-alpha"],
-        "default_parameters": {
-            "databricks/dolly-v2-12b": {
-                "torch_dtype": "torch.bfloat16",
-                "trust_remote_code": True,
-                "device_map": "auto",
-                "max_new_tokens": 256,
-                "temperature": 0.001,
-                "return_full_text": True
-            },
-            "gpt-3.5-turbo": {
-                "gptmodel": "gpt-3.5-turbo",
-                "temperature": 0,
-                "max_tokens": 256
-            },
-            "HuggingFaceH4/starchat-alpha": {
-            }
-        }
-    },
-    "similarity_checking": {
-    },
-    "codebase_question_answering": {
-    }
-}
+config_file = os.path.join(os.path.dirname(__file__), 'config.json')
+
+with open(config_file) as f:
+    config = json.load(f)
 
 def hpcpipelines(task: str, model: str, **kwargs) -> callable:
     """
