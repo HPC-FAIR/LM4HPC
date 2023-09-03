@@ -1,10 +1,19 @@
 {
     "openmp_question_answering": {
-        "models": ["databricks/dolly-v2-12b", "gpt", "HuggingFaceH4/starchat-alpha"],
+        "models": ["databricks/dolly-v2-12b",
+                   "databricks/dolly-v2-3b",
+                   "databricks/dolly-v2-7b",
+                   "gpt-4",
+                   "gpt-4-0613",
+                   "gpt-4-32k",
+                   "gpt-4-32k-0613",
+                   "gpt-3.5-turbo",
+                   "gpt-3.5-turbo-16k",
+                   "davinci-002",
+                   "HuggingFaceH4/starchat-alpha"],
         "default_parameters": {
-            "dolly": {
+            "dolly2": {
                 "torch_dtype": "torch.bfloat16",
-                "trust_remote_code": true,
                 "device_map": "auto",
                 "max_new_tokens": 256,
                 "temperature": 0.001,
