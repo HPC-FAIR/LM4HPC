@@ -6,10 +6,12 @@ setup(
     packages=find_packages(where='./lm4hpc'),
     package_dir={'': '.',
                  "lm4hpc": "./lm4hpc"},
+    package_data={'lm4hpc': ['config.json']},
     install_requires=[
         'torch',
         'transformers',
         'torchvision',
         'accelerate',
+        'openai',
     ],
 )
