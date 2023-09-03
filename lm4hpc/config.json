@@ -1,6 +1,6 @@
 {
     "openmp_question_answering": {
-        "models": ["databricks/dolly-v2-12b", "gpt3.5-turbo", "HuggingFaceH4/starchat-alpha"],
+        "models": ["databricks/dolly-v2-12b", "gpt", "HuggingFaceH4/starchat-alpha"],
         "default_parameters": {
             "dolly": {
                 "torch_dtype": "torch.bfloat16",
@@ -10,7 +10,10 @@
                 "temperature": 0.001,
                 "return_full_text": true
             },
-            "gpt3": {
+            "gpt": {
+                "gptmodel": "gpt-3.5-turbo",
+                "temperature": 0,
+                "max_tokens": 256
             },
             "starcoder": {
             }
