@@ -1,12 +1,17 @@
 import torch, json, os, openai
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
+from instruct_pipeline import InstructionTextGenerationPipeline
 
 with open(os.path.join(os.path.dirname(__file__), 'config.json')) as f:
         config = json.load(f)
 
 def llm_generate_dolly(model: str, question: str, **parameters) -> str:
-    generate_text = pipeline(model = model, **parameters)
+    tokenizer_pretrained = AutoTokenizer.from_pretrained(model, padding_side="left")
+    model_pretrained = AutoModelForCausalLM.from_pretrained("databricks/dolly-v2-3b", device_map="auto", torch_dtype=torch.bfloat16)
+    generate_text = InstructionTextGenerationPipeline(model=model_pretrained, tokenizer=tokenizer_pretrained, **parameters)
     return generate_text(question)[0]["generated_text"].split("\n")[-1]
+
+
 
 def llm_generate_gpt(model: str, question: str, **parameters) -> str:
     msg = [{"role": "system", "content": "You are an OpenMP export."}]
