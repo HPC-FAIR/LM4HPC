@@ -8,17 +8,6 @@ from transformers import (
     AutoModelForCausalLM
 )
 from ._instruct_pipeline import InstructionTextGenerationPipeline
-# import streamlit as st
-from dotenv import load_dotenv
-from PyPDF2 import PdfReader
-from langchain.text_splitter import CharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings, HuggingFaceInstructEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.memory import ConversationBufferMemory
-from langchain.chains import ConversationalRetrievalChain
-from langchain.chat_models import ChatOpenAI
-# from htmlTemplates import bot_template, user_template, css
-
 from transformers import pipeline
 
 # Load the configuration once when the module is imported
@@ -27,57 +16,10 @@ with open(CONFIG_PATH, 'r') as f:
     CONFIG = json.load(f)
 
 
-import os
-
-
-def get_pdf_text(input_path):
-    """
-    Extract text from a given PDF file or from all PDF files within a specified directory.
-
-    Parameters:
-    - input_path (str): Path to the PDF file or directory containing PDF files.
-
-    Returns:
-    - str: Extracted text from the PDF file(s).
-
-    Raises:
-    - ValueError: If the provided path is neither a PDF file nor a directory containing PDF files.
-    - FileNotFoundError: If the provided path does not exist.
-    """
-
-    if not os.path.exists(input_path):
-        raise FileNotFoundError(
-            f"The specified path '{input_path}' does not exist.")
-
-    # Extract text from a single PDF
-    def extract_from_pdf(pdf_path):
-        try:
-            with PdfReader(pdf_path) as reader:
-                return ''.join(page.extract_text() for page in reader.pages)
-        except Exception as e:
-            print(f"Error reading '{pdf_path}': {e}")
-            return ""
-
-    # If the input is a single PDF file
-    if os.path.isfile(input_path) and input_path.endswith('.pdf'):
-        return extract_from_pdf(input_path)
-
-    # If the input is a directory
-    elif os.path.isdir(input_path):
-        pdf_files = [os.path.join(input_path, file) for file in os.listdir(
-            input_path) if file.endswith('.pdf')]
-
-        if not pdf_files:
-            raise ValueError("No PDF files found in the specified directory.")
-
-        return ''.join(extract_from_pdf(pdf_file) for pdf_file in pdf_files)
-
-    else:
-        raise ValueError(
-            "The provided path is neither a PDF file nor a directory containing PDF files.")
-
-
 def llm_generate_dolly(model: str, question: str, **parameters) -> str:
+    """
+    Answer the question using the Dolly model.
+    """
     tokenizer_pretrained = AutoTokenizer.from_pretrained(
         model, padding_side="left")
     model_pretrained = AutoModelForCausalLM.from_pretrained(
@@ -88,6 +30,9 @@ def llm_generate_dolly(model: str, question: str, **parameters) -> str:
 
 
 def llm_generate_gpt(model: str, question: str, **parameters) -> str:
+    """
+    Answer the question using the GPT model.
+    """
     msg = [{"role": "system", "content": "You are an OpenMP export."}]
     msg.append({"role": "user", "content": question})
     response = openai.ChatCompletion.create(
@@ -99,6 +44,9 @@ def llm_generate_gpt(model: str, question: str, **parameters) -> str:
 
 
 def llm_generate_starchat(model: str, question: str, **parameters) -> str:
+    """
+    Answer the question using the StarChat model.
+    """
     tokenizer = AutoTokenizer.from_pretrained(model)
     model = AutoModelForCausalLM.from_pretrained(model,
                                                  load_in_8bit=True,
@@ -137,13 +85,13 @@ def openmp_question_answering(model: str, question: str, **parameters) -> str:
     Raises:
         ValueError: If the model is not valid.
     """
-    if model in config['openmp_question_answering']['models'] and model.startswith('databricks/dolly-v2'):
+    if model in CONFIG['openmp_question_answering']['models'] and model.startswith('databricks/dolly-v2'):
         response = llm_generate_dolly(model, question, **parameters)
         return response
-    elif model == 'gpt-3.5-turbo':
+    elif model in CONFIG['openmp_question_answering']['models'] and model.startswith('gpt-'):
         response = llm_generate_gpt(model, question, **parameters)
         return response
-    elif model == 'HuggingFaceH4/starchat-alpha':
+    elif model in CONFIG['openmp_question_answering']['models'] and model.startswith('HuggingFaceH4/starchat-'):
         response = llm_generate_starchat(model, question, **parameters)
         return response
     else:
