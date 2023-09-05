@@ -21,12 +21,19 @@
                 "return_full_text": true
             },
             "gpt": {
-                "gptmodel": "gpt-3.5-turbo",
+                "knowledge_base": "",
                 "temperature": 0,
                 "max_tokens": 256
             },
             "starcoder": {
-            }
+            },
+        "knowledge_base_parameters": {
+            "usage": "none",
+            "pdf_path": "lm4hpc/data/openmp_pdfs",
+            "chunk_separator": "\n",
+            "chunk_size": 1000,
+            "chunk_overlap": 200
+        }
         }
     },
     "similarity_checking": {

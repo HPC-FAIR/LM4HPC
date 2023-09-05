@@ -1,4 +1,4 @@
-import os
+import os, json, openai, pickle
 from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from langchain.document_loaders import PyPDFLoader 
@@ -8,8 +8,14 @@ from langchain.vectorstores import FAISS
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from langchain.chat_models import ChatOpenAI
+from langchain import HuggingFaceHub
+from langchain.chains import RetrievalQA
 # import streamlit as st
 # from htmlTemplates import bot_template, user_template, css
+
+# CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
+# with open(CONFIG_PATH, 'r') as f:
+#     CONFIG = json.load(f)
 
 def get_pdf_text(input_path):
     """
@@ -42,6 +48,7 @@ def get_pdf_text(input_path):
     # If the input is a single PDF file
     if os.path.isfile(input_path) and input_path.endswith('.pdf'):
         print(f"Reading '{input_path}'...")
+        print("Finished: 1 PDF file loaded")
         return extract_from_pdf(input_path)
 
     # If the input is a directory
@@ -54,7 +61,8 @@ def get_pdf_text(input_path):
 
         print(f"Reading {len(pdf_files)} PDF files:")
         for file in pdf_files:
-            print(f"Reading file...")
+            print(f"Reading file: {file} ...")
+        print(f"Finished: {len(pdf_files)} PDF file(s) loaded")
         return ''.join(extract_from_pdf(pdf_file) for pdf_file in pdf_files)
 
     else:
@@ -71,7 +79,7 @@ def get_chunk_text(text):
     )
 
     chunks = text_splitter.split_text(text)
-
+    print(f"Finished: {len(chunks)} chunks generated from PDF texts.") 
     return chunks
 
 def get_vector_store(text_chunks, embedding="openai"):
@@ -94,22 +102,47 @@ def get_vector_store(text_chunks, embedding="openai"):
     
     return vectorstore
 
-def get_conversation_chain(vector_store):
+def get_conversation_chain(vector_store, model='openai'):
     
-    # OpenAI Model
-
-    llm = ChatOpenAI()
-
-    # HuggingFace Model
-
-    # llm = HuggingFaceHub(repo_id="google/flan-t5-xxl", model_kwargs={"temperature":0.5, "max_length":512})
+    if (model == 'openai'):
+        # OpenAI Model
+        llm = ChatOpenAI(temperature=0.0, model_name='gpt-3.5-turbo', max_tokens=256)
+    else:
+        # HuggingFace Model
+        llm = HuggingFaceHub(repo_id=model, model_kwargs={"temperature":0.000001, "max_length":256})
 
     memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
 
-    conversation_chain = ConversationalRetrievalChain.from_llm(
+    openmp_qa_chain = ConversationalRetrievalChain.from_llm(
         llm = llm,
         retriever = vector_store.as_retriever(),
         memory = memory
     )
 
-    return conversation_chain
+    return openmp_qa_chain
+
+
+def get_retrievalQA(vector_store, model='openai'):
+    
+    if (model == 'openai'):
+        # OpenAI Model
+        llm = ChatOpenAI(temperature=0.0, model_name='gpt-3.5-turbo', max_tokens=256)
+    else:
+        # HuggingFace Model
+        llm = HuggingFaceHub(repo_id=model, model_kwargs={"temperature":0.000001, "max_length":256})
+
+    openmp_qa_chain = RetrievalQA.from_chain_type(
+        llm = llm,
+        chain_type="stuff",
+        retriever = vector_store.as_retriever(),
+    )
+
+    return openmp_qa_chain
+
+
+def store_embeddings(docs, embeddings, store_name, path):
+
+    vectorStore = FAISS.from_documents(docs, embeddings)
+
+    with open(f"{path}/faiss_{store_name}.pkl", "wb") as f:
+        pickle.dump(vectorStore, f)

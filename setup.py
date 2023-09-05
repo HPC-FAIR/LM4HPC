@@ -13,5 +13,10 @@ setup(
         'torchvision',
         'accelerate',
         'openai',
+        'tiktoken',
+        'langchain',
+        'faiss-cpu',
+        'sentence_transformers',
+        'instructorembedding'
     ],
 )

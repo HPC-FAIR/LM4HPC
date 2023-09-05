@@ -96,3 +96,4 @@ def openmp_question_answering(model: str, question: str, **parameters) -> str:
         return response
     else:
         raise ValueError('Unknown model: {}'.format(model))
+
