@@ -9,38 +9,54 @@ from transformers import (
 )
 from ._instruct_pipeline import InstructionTextGenerationPipeline
 from transformers import pipeline
+from _utils_langchain import (get_pdf_text,
+                              get_chunk_text,
+                              get_vector_store,
+                              get_retrievalQA)
 
 # Load the configuration once when the module is imported
 CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
 with open(CONFIG_PATH, 'r') as f:
     CONFIG = json.load(f)
 
+def llm_langchain(question, pdf_files, model):
+    text = get_pdf_text(pdf_files)
+    chunks = get_chunk_text(text)
+    vectore_store = get_vector_store(chunks)
+    qa_chain = get_retrievalQA(vector_store=vectore_store, model=model)
+    answer = qa_chain(question)
+    return answer
 
-def llm_generate_dolly(model: str, question: str, **parameters) -> str:
+
+def llm_generate_dolly(model: str, question: str, pdf_files='', **parameters) -> str:
     """
     Answer the question using the Dolly model.
     """
-    tokenizer_pretrained = AutoTokenizer.from_pretrained(
-        model, padding_side="left")
-    model_pretrained = AutoModelForCausalLM.from_pretrained(
-        "databricks/dolly-v2-3b", device_map="auto", torch_dtype=torch.bfloat16)
-    generate_text = InstructionTextGenerationPipeline(
-        model=model_pretrained, tokenizer=tokenizer_pretrained, **parameters)
-    return generate_text(question)[0]["generated_text"].split("\n")[-1]
+    if pdf_files=='':
+        tokenizer_pretrained = AutoTokenizer.from_pretrained(
+            model, padding_side="left")
+        model_pretrained = AutoModelForCausalLM.from_pretrained(
+            "databricks/dolly-v2-3b", device_map="auto", torch_dtype=torch.bfloat16)
+        generate_text = InstructionTextGenerationPipeline(
+            model=model_pretrained, tokenizer=tokenizer_pretrained, **parameters)
+        return generate_text(question)[0]["generated_text"].split("\n")[-1]
+    else:
+        return llm_langchain(question, pdf_files, model)
 
 
-def llm_generate_gpt(model: str, question: str, **parameters) -> str:
+def llm_generate_gpt(model: str, question: str, pdf_files='', **parameters) -> str:
     """
     Answer the question using the GPT model.
     """
-    msg = [{"role": "system", "content": "You are an OpenMP export."}]
-    msg.append({"role": "user", "content": question})
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=msg,
-        **parameters
-    )
-    return response['choices'][0]['message']['content']
+    if pdf_files == '':
+        msg = [{"role": "system", "content": "You are an OpenMP export."}]
+        msg.append({"role": "user", "content": question})
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=msg,
+            **parameters
+        )
+        return response['choices'][0]['message']['content']
 
 
 def llm_generate_starchat(model: str, question: str, **parameters) -> str:

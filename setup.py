@@ -17,6 +17,6 @@ setup(
         'langchain',
         'faiss-cpu',
         'sentence_transformers',
-        'instructorembedding'
+        'instructorembedding',        
     ],
 )

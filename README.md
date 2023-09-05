@@ -29,19 +29,7 @@ git intall -e /PATH/TO/LM4HPC
 
 
 ## Usage
-To get started with LM4HPC, refer to the following example:
-
-
-```python
-from lm4hpc.hpcpipeline import hpcpipelines
-pipe_dolly=hpcpipelines(task="openmp_question_answering", model="databricks/dolly-v2-12b")
-```
-## Tests
-Unit tests have been integrated throughout the development process. To manually execute these tests, follow these steps:
-```bash
-cd /PATH/TO/LM4HPC
-pytest
-```
+To get started with LM4HPC, refer to the following example tested on Google Colab: https://colab.research.google.com/drive/1-Z6-7dXpjjJgG3-S90t1AN_eCPY-1No6?usp=sharing
 
 ## Project Structure
 
