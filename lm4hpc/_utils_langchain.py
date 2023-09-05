@@ -87,7 +87,7 @@ def get_vector_store(text_chunks, embedding="openai"):
     get vector store from text chunks, with a specified embedding.
 
     emebedding: str 
-        "openai" or hugging face embedding id, forexample "hkunlp/instructor-xl"
+        "openai" or hugging face embedding id, for example "hkunlp/instructor-xl"
 
     """
     

@@ -9,7 +9,7 @@ from transformers import (
 )
 from ._instruct_pipeline import InstructionTextGenerationPipeline
 from transformers import pipeline
-from _utils_langchain import (get_pdf_text,
+from ._utils_langchain import (get_pdf_text,
                               get_chunk_text,
                               get_vector_store,
                               get_retrievalQA)
@@ -19,10 +19,10 @@ CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
 with open(CONFIG_PATH, 'r') as f:
     CONFIG = json.load(f)
 
-def llm_langchain(question, pdf_files, model):
+def llm_langchain(question, pdf_files, model, embedding):
     text = get_pdf_text(pdf_files)
     chunks = get_chunk_text(text)
-    vectore_store = get_vector_store(chunks)
+    vectore_store = get_vector_store(chunks, embedding)
     qa_chain = get_retrievalQA(vector_store=vectore_store, model=model)
     answer = qa_chain(question)
     return answer
@@ -57,6 +57,8 @@ def llm_generate_gpt(model: str, question: str, pdf_files='', **parameters) -> s
             **parameters
         )
         return response['choices'][0]['message']['content']
+    else:
+        return llm_langchain(question, pdf_files, model)
 
 
 def llm_generate_starchat(model: str, question: str, **parameters) -> str:
@@ -86,7 +88,7 @@ def llm_generate_starchat(model: str, question: str, **parameters) -> str:
     return output
 
 
-def openmp_question_answering(model: str, question: str, **parameters) -> str:
+def openmp_question_answering(model: str, question: str, pdf_files: str, langchain_embedding: str, **parameters) -> str:
     """
     Generates an answer to a question using the specified model and parameters.
 
@@ -102,10 +104,10 @@ def openmp_question_answering(model: str, question: str, **parameters) -> str:
         ValueError: If the model is not valid.
     """
     if model in CONFIG['openmp_question_answering']['models'] and model.startswith('databricks/dolly-v2'):
-        response = llm_generate_dolly(model, question, **parameters)
+        response = llm_generate_dolly(model, question, pdf_files, langchain_embedding, **parameters)
         return response
     elif model in CONFIG['openmp_question_answering']['models'] and model.startswith('gpt-'):
-        response = llm_generate_gpt(model, question, **parameters)
+        response = llm_generate_gpt(model, question, pdf_files, langchain_embedding, **parameters)
         return response
     elif model in CONFIG['openmp_question_answering']['models'] and model.startswith('HuggingFaceH4/starchat-'):
         response = llm_generate_starchat(model, question, **parameters)

@@ -31,39 +31,3 @@ git intall -e /PATH/TO/LM4HPC
 ## Usage
 To get started with LM4HPC, refer to the following example tested on Google Colab: https://colab.research.google.com/drive/1-Z6-7dXpjjJgG3-S90t1AN_eCPY-1No6?usp=sharing
 
-## Project Structure
-
-LM4HPC/
-│
-├── lm4hpc/
-│   ├── __init__.py
-│   ├── _instruct_pipeline.py
-│   ├── config.json
-│   ├── hpcpipeline.py
-│   ├── pipeline_codebase_question_answering.py
-│   ├── pipeline_openmp_question_answering.py
-│   ├── pipeline_similarity_checking.py
-│   │
-│   ├── data/    # Data assets
-│   │   ├── ...
-│   │
-│   ├── utils/   # Utility and helper functions
-│   │   ├── __init__.py
-│   │   ├── ...
-│   │
-│   └── tests/   # Unit test suite
-│       ├── __init__.py
-│       ├── test_hpcpipeline.py
-│       ├── ...
-│
-├── docs/         # Comprehensive documentation
-│   ├── ...
-│
-├── examples/     # Exemplary scripts and notebooks
-│   ├── ...
-│
-├── .gitignore
-├── requirements.txt
-├── setup.py
-└── README.md
-

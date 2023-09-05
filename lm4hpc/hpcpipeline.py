@@ -43,7 +43,7 @@ def hpcpipelines(task: str, model: str, **kwargs) -> callable:
     parameters = {**default_parameters, **kwargs}
 
     if task == 'openmp_question_answering':
-        return lambda question: openmp_question_answering(model, question, pdf_files='' **parameters)
+        return lambda question: openmp_question_answering(model, question, pdf_files='', langchain_embedding=None, **parameters)
     elif task == 'similarity_checking':
         return lambda code1, code2: similarity_checking(model, code1, code2, **parameters)
     elif task == 'codebase_question_answering':
