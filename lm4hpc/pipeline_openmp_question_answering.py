@@ -44,7 +44,7 @@ def llm_generate_dolly(model: str, question: str, pdf_files='', langchain_embedd
         return llm_langchain(question, pdf_files, model, langchain_embedding)
 
 
-def llm_generate_gpt(model: str, question: str, pdf_files='', **parameters) -> str:
+def llm_generate_gpt(model: str, question: str, pdf_files='',langchain_embedding='', **parameters) -> str:
     """
     Answer the question using the GPT model.
     """
@@ -58,7 +58,7 @@ def llm_generate_gpt(model: str, question: str, pdf_files='', **parameters) -> s
         )
         return response['choices'][0]['message']['content']
     else:
-        return llm_langchain(question, pdf_files, model)
+        return llm_langchain(question, pdf_files, model, langchain_embedding)
 
 
 def llm_generate_starchat(model: str, question: str, **parameters) -> str:
