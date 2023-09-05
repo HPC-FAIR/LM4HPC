@@ -19,16 +19,16 @@ CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
 with open(CONFIG_PATH, 'r') as f:
     CONFIG = json.load(f)
 
-def llm_langchain(question, pdf_files, model, embedding):
+def llm_langchain(question, pdf_files, model, langchain_embedding):
     text = get_pdf_text(pdf_files)
     chunks = get_chunk_text(text)
-    vectore_store = get_vector_store(chunks, embedding)
+    vectore_store = get_vector_store(chunks, langchain_embedding)
     qa_chain = get_retrievalQA(vector_store=vectore_store, model=model)
     answer = qa_chain(question)
     return answer
 
 
-def llm_generate_dolly(model: str, question: str, pdf_files='', **parameters) -> str:
+def llm_generate_dolly(model: str, question: str, pdf_files='', langchain_embedding='', **parameters) -> str:
     """
     Answer the question using the Dolly model.
     """
@@ -41,7 +41,7 @@ def llm_generate_dolly(model: str, question: str, pdf_files='', **parameters) ->
             model=model_pretrained, tokenizer=tokenizer_pretrained, **parameters)
         return generate_text(question)[0]["generated_text"].split("\n")[-1]
     else:
-        return llm_langchain(question, pdf_files, model)
+        return llm_langchain(question, pdf_files, model, langchain_embedding)
 
 
 def llm_generate_gpt(model: str, question: str, pdf_files='', **parameters) -> str:
