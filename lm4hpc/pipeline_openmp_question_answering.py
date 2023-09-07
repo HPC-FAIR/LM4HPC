@@ -88,7 +88,7 @@ def llm_generate_starchat(model: str, question: str, **parameters) -> str:
     return output
 
 
-def openmp_question_answering(model: str, question: str, pdf_files: str, langchain_embedding: str, **parameters) -> str:
+def openmp_question_answering(model: str, question: str, pdf_files: str = '', langchain_embedding: str = '', **parameters) -> str:
     """
     Generates an answer to a question using the specified model and parameters.
 
