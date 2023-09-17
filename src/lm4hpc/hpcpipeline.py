@@ -1,17 +1,15 @@
 import json
 import os
-from .pipeline_openmp_question_answering import openmp_question_answering
-from .pipeline_codebase_question_answering import codebase_question_answering
-from .pipeline_similarity_checking import similarity_checking
+from base import Pipeline, OpenMPQuestionAnsweringPipeline, CodebaseQuestionAnsweringPipeline, SimilarityCheckingPipeline
 
 config_file = os.path.join(os.path.dirname(__file__), 'config.json')
 
 with open(config_file) as f:
     config = json.load(f)
 
-def hpcpipelines(task: str, model: str, **kwargs) -> callable:
+def get_pipeline(task: str, model: str, **kwargs) -> Pipeline:
     """
-    Returns a function for the specified task and model.
+    Returns an instance of the pipeline for the specified task and model.
 
     Parameters:
         task (str): The task to perform. Options are 'openmp_question_answering', 'similarity_checking', and 'codebase_question_answering'.
@@ -19,7 +17,7 @@ def hpcpipelines(task: str, model: str, **kwargs) -> callable:
         **kwargs: Additional keyword arguments.
 
     Returns:
-        callable: A function that takes the appropriate parameters for the specified task and returns the result.
+        Pipeline: An instance of the pipeline that can execute the task.
 
     Raises:
         ValueError: If the task or model is not valid.
@@ -27,8 +25,7 @@ def hpcpipelines(task: str, model: str, **kwargs) -> callable:
     # Check if the task is valid
     if task not in config:
         supported_tasks = ', '.join(config.keys())
-        raise ValueError(
-            'Unknown task: {}. Supported tasks are: {}'.format(task, supported_tasks))
+        raise ValueError('Unknown task: {}. Supported tasks are: {}'.format(task, supported_tasks))
 
     # Check if the model is valid for the task
     if model not in config[task]['models']:
@@ -42,10 +39,10 @@ def hpcpipelines(task: str, model: str, **kwargs) -> callable:
     # Update the default parameters with the user-specified parameters
     parameters = {**default_parameters, **kwargs}
 
+    # Return the appropriate pipeline instance based on the task
     if task == 'openmp_question_answering':
-        return lambda question: openmp_question_answering(model, question, **parameters)
+        return OpenMPQuestionAnsweringPipeline(model, **parameters)
     elif task == 'similarity_checking':
-        return lambda code1, code2: similarity_checking(model, code1, code2, **parameters)
+        return SimilarityCheckingPipeline(model, **parameters)
     elif task == 'codebase_question_answering':
-        return lambda question: codebase_question_answering(model, question, **parameters)
-    
+        return CodebaseQuestionAnsweringPipeline(model, **parameters)

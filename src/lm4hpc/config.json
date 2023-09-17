@@ -39,5 +39,7 @@
     "similarity_checking": {
     },
     "codebase_question_answering": {
+        "check_file_types":['.c', '.cpp'],
+
     }
 }

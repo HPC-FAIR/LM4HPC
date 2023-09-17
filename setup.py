@@ -3,10 +3,10 @@ from setuptools import setup, find_packages
 setup(
     name='lm4hpc',
     version='0.1',
-    packages=find_packages(where='./lm4hpc'),
+    packages=find_packages(where='./src/lm4hpc'),
     package_dir={'': '.',
-                 "lm4hpc": "./lm4hpc"},
-    package_data={'lm4hpc': ['config.json']},
+                 "lm4hpc": "./src/lm4hpc"},
+    package_data={'src': ['config.json']},
     install_requires=[
         'torch',
         'transformers',

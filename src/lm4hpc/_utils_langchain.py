@@ -81,7 +81,7 @@ def get_chunk_text(text):
     print(f"Finished: {len(chunks)} chunks generated from PDF texts.") 
     return chunks
 
-def get_vector_store(text_chunks, embedding="openai"):
+def get_vector_store(text_chunks, model="openai"):
     """
     get vector store from text chunks, with a specified embedding.
 
@@ -91,11 +91,11 @@ def get_vector_store(text_chunks, embedding="openai"):
     """
     
     # For OpenAI Embeddings
-    if embedding == "openai":
+    if model == "openai":
         embeddings = OpenAIEmbeddings()
     else:
         # For Huggingface Embeddings
-        embeddings = HuggingFaceInstructEmbeddings(model_name = embedding)
+        embeddings = HuggingFaceInstructEmbeddings(model_name = model)
 
     vectorstore = FAISS.from_texts(texts = text_chunks, embedding = embeddings)
     
@@ -121,11 +121,10 @@ def get_conversation_chain(vector_store, model='openai'):
     return openmp_qa_chain
 
 
-def get_retrievalQA(vector_store, model='openai'):
-    
-    if (model == 'openai'):
+def get_retrievalQA(vector_store, model):
+    if model.startswith('gpt-'):
         # OpenAI Model
-        llm = ChatOpenAI(temperature=0.0, model_name='gpt-3.5-turbo', max_tokens=256)
+        llm = ChatOpenAI(temperature=0.0, model_name=model, max_tokens=256)
     else:
         # HuggingFace Model
         llm = HuggingFaceHub(repo_id=model, model_kwargs={"temperature":0.000001, "max_length":256})
