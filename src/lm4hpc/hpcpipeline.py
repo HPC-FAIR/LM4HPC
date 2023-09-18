@@ -1,6 +1,7 @@
 import json
 import os
-from base import Pipeline, OpenMPQuestionAnsweringPipeline, CodebaseQuestionAnsweringPipeline, SimilarityCheckingPipeline
+from .base import Pipeline, OpenMPQuestionAnsweringPipeline
+# , CodebaseQuestionAnsweringPipeline, SimilarityCheckingPipeline
 
 config_file = os.path.join(os.path.dirname(__file__), 'config.json')
 
