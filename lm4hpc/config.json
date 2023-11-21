@@ -12,6 +12,7 @@
             "gpt-3.5-turbo-16k",
             "davinci-002",
             "HuggingFaceH4/starchat-alpha",
+            "HuggingFaceH4/starchat-beta",
             "codellama/CodeLlama-7b-Instruct-hf",
             "codellama/CodeLlama-7b-hf"
         ],
