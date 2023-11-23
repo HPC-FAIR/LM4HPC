@@ -1,16 +1,21 @@
 {
     "openmp_question_answering": {
-        "models": ["databricks/dolly-v2-12b",
-                   "databricks/dolly-v2-3b",
-                   "databricks/dolly-v2-7b",
-                   "gpt-4",
-                   "gpt-4-0613",
-                   "gpt-4-32k",
-                   "gpt-4-32k-0613",
-                   "gpt-3.5-turbo",
-                   "gpt-3.5-turbo-16k",
-                   "davinci-002",
-                   "HuggingFaceH4/starchat-alpha"],
+        "models": [
+            "databricks/dolly-v2-12b",
+            "databricks/dolly-v2-3b",
+            "databricks/dolly-v2-7b",
+            "gpt-4",
+            "gpt-4-0613",
+            "gpt-4-32k",
+            "gpt-4-32k-0613",
+            "gpt-3.5-turbo",
+            "gpt-3.5-turbo-16k",
+            "davinci-002",
+            "HuggingFaceH4/starchat-alpha",
+            "HuggingFaceH4/starchat-beta",
+            "codellama/CodeLlama-7b-Instruct-hf",
+            "codellama/CodeLlama-7b-hf"
+        ],
         "default_parameters": {
             "dolly2": {
                 "torch_dtype": "torch.bfloat16",
@@ -25,19 +30,16 @@
                 "temperature": 0,
                 "max_tokens": 256
             },
-            "starcoder": {
-            },
-        "knowledge_base_parameters": {
-            "usage": "none",
-            "pdf_path": "lm4hpc/data/openmp_pdfs",
-            "chunk_separator": "\n",
-            "chunk_size": 1000,
-            "chunk_overlap": 200
-        }
+            "starcoder": {},
+            "knowledge_base_parameters": {
+                "usage": "none",
+                "pdf_path": "lm4hpc/data/openmp_pdfs",
+                "chunk_separator": "\n",
+                "chunk_size": 1000,
+                "chunk_overlap": 200
+            }
         }
     },
-    "similarity_checking": {
-    },
-    "codebase_question_answering": {
-    }
+    "similarity_checking": {},
+    "codebase_question_answering": {}
 }
